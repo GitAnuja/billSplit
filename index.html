@@ -1,0 +1,146 @@
+<html>
+	<body>
+		<div width="50%" height="50%">
+			No of people : 
+			<input id="noofpeople">
+			<input type="button" value="next" onclick="createRows();"><br><br>
+			<table id="people" border="1"></table>
+			<br>
+			Tax : <input id="tax">
+			<input type="button" value="submit" onclick="calculate();">
+			<br>
+			<table id="names" border="1" style="display : none;">
+				<tr><td>Names</td><td>Total</td></tr>
+			</table>
+		</div>
+	</body>
+	<script>
+		function createRows(){
+			var noofpeople = document.getElementById("noofpeople").value;
+			var header = document.createElement("tr");
+			document.getElementById("people").append(header);
+			var names = document.createElement("td");
+			header.append(names);
+			names.innerText = "Names";
+			var item = document.createElement("td");
+			header.append(item);
+			var label = document.createElement("label");
+			item.append(label);
+			label.innerText = "Item 1";
+			var input = document.createElement("input");
+			item.append(input);
+			var add = document.createElement("td");
+			header.append(add);
+			var button = document.createElement("input");
+			button.type = "button";
+			button.value = "ADD";
+			add.append(button);
+			button.onclick = function(){
+				addColumn();
+			}
+			for(var i=0; i<noofpeople; i++){
+				var row = document.createElement("tr");
+				document.getElementById("people").append(row);
+				var cell = document.createElement("td");
+				row.append(cell);
+				var input = document.createElement("input");
+				cell.append(input);
+				var cell1 = document.createElement("td");
+				row.append(cell1);
+				var input1 = document.createElement("input");
+				cell1.append(input1);
+				input1.type = "checkbox";
+			}
+		}
+		document.getElementById("noofpeople").value = 4;
+		createRows();
+		function addColumn(){
+			var table = document.getElementById("people");
+			var rows = table.children;
+
+			for(var i=1; i<rows.length; i++){
+				var row = rows[i];
+				var td = document.createElement("td");
+				row.append(td);
+				var input = document.createElement("input");
+				td.append(input);
+				input.type = "checkbox";
+			}
+			var add = table.children[0].lastElementChild;
+			var clone = add.cloneNode(true);
+			clone.onclick = function(){
+				addColumn();
+			}
+			table.children[0].append(clone);
+			var count = rows[1].childElementCount-1;
+			var label = document.createElement("label");
+			add.innerText = "";
+			add.append(label);
+			label.innerText = "Item "+count;
+			var input = document.createElement("input");
+			add.append(input);
+		}
+		addColumn();
+		addColumn();
+		var table = document.getElementById("people").children;
+		var names = ["Anuja", "Prabu", "Siva", "Boopi"];
+		for(var i=1; i<table.length; i++){
+			var row = table[i].children;
+			row[0].children[0].value = names[i-1];
+		}
+		document.getElementById("tax").value = "10";
+		var row = table[0].children;
+		for(var i=1; i<row.length-1; i++){
+			row[i].children[1].value = i*100;
+		}
+		function calculate(){
+			var table = document.getElementById("people").children;
+			var sum = [];
+			var values = table[0].children;
+			var total = 0;
+			for(var i=1; i<values.length-1; i++){
+				var value = parseInt(values[i].children[1].value);
+				total+=value;
+				var count = 0;
+				for(var j=1; j<table.length; j++){
+					var check = table[j].children[i].children[0].checked;
+					if(check){
+						count++;
+					}
+				}
+				for(var j=1; j<table.length; j++){
+					var check = table[j].children[i].children[0].checked;
+					if(check){
+						if(sum[j-1] == undefined){
+							sum[j-1] = 0;
+						}
+						sum[j-1] += value/count;
+					}
+				}
+			}
+			var tax = document.getElementById("tax").value;
+			for(var i=0; i<sum.length; i++){
+				var t = sum[i]/total;
+				t = t*tax;
+				sum[i] = sum[i]+t;
+			}
+			print(sum);
+		}
+		function print(sum){
+			var table = document.getElementById("people").children;
+			var names = document.getElementById("names");
+			names.style.display = "";
+			for(var j=1; j<table.length; j++){
+				var name = table[j].children[0].children[0].value;
+				var row = document.createElement("tr");
+				names.append(row);
+				var td = document.createElement("td");
+				td.innerText = name;
+				row.append(td);
+				var td1 = document.createElement("td");
+				row.append(td1);
+				td1.innerText = sum[j-1];
+			}
+		}
+	</script>
+</html>
